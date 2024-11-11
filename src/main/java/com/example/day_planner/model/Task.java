@@ -30,7 +30,12 @@ public class Task {
 
     @Enumerated(EnumType.STRING)
     private TaskStatus status;
+
     @Enumerated(EnumType.STRING)
     private Priority priority;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user; // Связь с пользователем
 
 }

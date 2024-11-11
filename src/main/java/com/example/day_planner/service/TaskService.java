@@ -3,8 +3,11 @@ package com.example.day_planner.service;
 import com.example.day_planner.model.Priority;
 import com.example.day_planner.model.Task;
 import com.example.day_planner.model.TaskStatus;
+import com.example.day_planner.model.User;
 import com.example.day_planner.repository.TaskRepository;
+import com.example.day_planner.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -14,7 +17,11 @@ import java.util.Optional;
 @Service
 public class TaskService {
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private TaskRepository taskRepository;
+
     public Task updateTask(Long id, Task updatedTask) {
         Optional<Task> existingTaskOpt = taskRepository.findById(id);
         if (existingTaskOpt.isPresent()) {
@@ -58,5 +65,16 @@ public class TaskService {
 
     public Optional<Task> findById(Long id) {
         return taskRepository.findById(id);
+    }
+    public List<Task> getUserTasks() {
+        // Получаем текущий email пользователя
+        String userEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        // Находим пользователя по email
+        User user = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Возвращаем задачи пользователя
+        return taskRepository.findByUser(user);
     }
 }

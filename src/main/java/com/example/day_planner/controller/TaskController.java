@@ -65,5 +65,9 @@ public class TaskController {
         return taskService.findById(id)
                 .orElseThrow(() -> new TaskNotFoundException("Task not found with id: " + id));
     }
+    @GetMapping("/tasks")
+    public List<Task> getUserTasks() {
+        return taskService.getUserTasks();
+    }
 
 }
